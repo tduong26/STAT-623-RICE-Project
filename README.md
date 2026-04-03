@@ -3,6 +3,9 @@
 Simulates the Lander-Waterman model of shotgun genome sequencing, comparing
 assembly outcomes on a purely random genome vs a repeat-rich genome.
 
+> **Course:** STAT 623 — Rice University  
+> **Environment:** Jupyter Notebook / Google Colab  
+
 ---
 
 ## Project structure
@@ -10,14 +13,14 @@ assembly outcomes on a purely random genome vs a repeat-rich genome.
 ```
 STAT623_project/
 │
-├── shortgun_simulation.py      ← main entry point  (run this)
+├── shortgun_simulation.ipynb      ← ▶ START HERE — runs the full simulation
 │
-├── theoretical_stats.py        ← α, E[# contigs], E[contig length]
-├── genome_utils.py             ← genome + read generation
-├── overlap.py                  ← overlap graph construction & drawing
-├── alignment_visualization.py  ← pysam-free alignment, contigs, coverage
-├── summary_plots.py            ← 6-panel comparison figure
-├── extended_plots.py           ← 5 recommended statistical plots + α sweep
+├── theoretical_stats.ipynb        ← Lander-Waterman formulas (α, E[contigs], E[length])
+├── genome_utils.ipynb             ← Genome generation + shotgun read sampling
+├── overlap.ipynb                  ← Overlap graph construction & drawing
+├── alignment_visualization.ipynb  ← Alignment, contig detection, coverage & plots
+├── summary_plots.ipynb            ← 6-panel side-by-side comparison figure
+├── extended_plots.ipynb           ← 5 recommended statistical plots + α sweep
 │
 ├── requirements.txt
 └── README.md
@@ -25,25 +28,49 @@ STAT623_project/
 
 ---
 
-## Installation
+## Notebook overview
 
-```bash
-pip install -r requirements.txt
-```
-
-> **pysam has been removed.** The original code used pysam (Linux-only).
-> All alignment bookkeeping now uses plain Python dicts — functionally
-> identical, but fully compatible with Windows and Google Colab.
+| Notebook | Cells | What's inside |
+|---|---|---|
+| `shortgun_simulation.ipynb` | 13 | Main entry point — imports all modules, runs both simulations, saves all 9 output figures |
+| `alignment_visualization.ipynb` | 12 | `create_alignment` · `get_contigs` · `get_coverage` · `visualize_alignment` · `plot_contigs` |
+| `extended_plots.ipynb` | 12 | `compute_nx` · `extract_gaps` · `_empirical_contig_count` · `plot_lander_waterman_sweep` · `generate_extended_summary_plots` |
+| `genome_utils.ipynb` | 8 | `generate_genome` · `generate_genome_with_repeats` · `generate_reads` |
+| `overlap.ipynb` | 8 | `overlap` · `build_overlap_graph` · `draw_graph` |
+| `summary_plots.ipynb` | 4 | `generate_summary_plots` |
+| `theoretical_stats.ipynb` | 8 | `compute_alpha` · `expected_contigs` · `expected_contig_length` |
 
 ---
 
-## Usage
+## Quick start
 
+### Google Colab
+1. Upload all `.ipynb` files to a single Colab folder (or clone this repo)
+2. Open `shortgun_simulation.ipynb`
+3. Uncomment and run the install cell at the top:
+   ```python
+   !pip install networkx matplotlib numpy
+   ```
+4. Run all cells — all 9 output PNGs will be saved to the working directory
+
+### VS Code / JupyterLab (local)
 ```bash
-python shortgun_simulation.py
+# Install dependencies
+pip install -r requirements.txt
+
+# Open the main notebook
+jupyter notebook shortgun_simulation.ipynb
 ```
 
-This runs both simulations and saves **9 PNG files**:
+> **Note:** `pysam` has been removed. The original code used pysam (Linux-only).
+> All alignment bookkeeping now uses plain Python dicts — fully compatible
+> with Windows, macOS, and Google Colab.
+
+---
+
+## Output files
+
+Running `shortgun_simulation.ipynb` end-to-end produces **9 PNG files**:
 
 | File | Contents |
 |---|---|
@@ -61,8 +88,8 @@ This runs both simulations and saves **9 PNG files**:
 
 ## Simulation parameters
 
-All parameters are in `shortgun_simulation.py` inside the two simulation
-functions. Key values:
+All parameters are in `shortgun_simulation.ipynb` inside the two simulation
+cells. Key values:
 
 | Parameter | Default | Description |
 |---|---|---|
@@ -76,9 +103,9 @@ functions. Key values:
 
 ## Theoretical background
 
-The Lander-Waterman model assumes read start positions are
-uniform over U(0, G), so read counts in any interval follow a Poisson
-distribution with rate α = NL/G.
+The Lander-Waterman model assumes read start positions are uniform over
+U(0, G), so read counts in any interval follow a Poisson distribution
+with rate α = NL/G.
 
 | Formula | Meaning |
 |---|---|
@@ -89,12 +116,12 @@ distribution with rate α = NL/G.
 
 **Effect of repeats:** When repeat elements are longer than the read length L,
 the uniform-start assumption breaks. Reads from multiple genomic positions map
-identically, causing empirical contig counts to exceed N·e^{−α} and per-position
-coverage to deviate from Poisson(α).
+identically, causing empirical contig counts to exceed N·e^{−α} and
+per-position coverage to deviate from Poisson(α).
 
 ---
 
-## Extended plots (`extended_plots.py`)
+## Extended plots (`extended_plots.ipynb`)
 
 `generate_extended_summary_plots(s0, s1)` produces a 2×3 figure:
 
